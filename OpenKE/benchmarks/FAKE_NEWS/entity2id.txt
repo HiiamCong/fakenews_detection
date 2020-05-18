@@ -1,0 +1,6 @@
+5
+coronavirus	0
+revenues	1
+growth prospect	2
+obama	3
+dead	4
