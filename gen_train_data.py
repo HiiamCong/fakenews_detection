@@ -1,15 +1,28 @@
 from get_triples import produceTriples, write_to_file
 from tqdm import tqdm
+from utils.mongo import Mongo
 
 triples_list = []
-sentences = [
-    "Many construction and retail companies and banks have lowered their business targets after the coronavirus cuts into revenues and dampened growth prospects.",
-    "Businesses lower targets after pandemic mauling",
-    "Obama is Dead"
-]
-for sentence in tqdm(sentences):
-    triples = produceTriples(sentence)
-    triples_list.extend(triples)
+sentences = []
 
-print(triples_list)
-write_to_file(triples_list, "OpenKE/benchmarks/FAKE_NEWS/triples.txt")
+db = Mongo().get_client()
+news_list = db['news'].find({
+    "status": 0
+})
+
+if news_list:
+    for news in news_list:
+        triples_set = []
+        sentences = news["sentences"]
+        for sentence in sentences:
+            triples = produceTriples(sentence)
+            triples_list.extend(triples)
+            triples_set.extend(triples)
+        query = { "key": news["key"] }
+        update_values = { "$set": { "tripleSet": triples_set} }
+        db['news'].update_one(query, update_values)
+
+    print("Writing {} triple set".format(len(triples_list)))
+    write_to_file(triples_list, "OpenKE/benchmarks/FAKE_NEWS/triples.txt")
+else:
+    print("DB NOT FOUND")
