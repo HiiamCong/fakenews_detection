@@ -19,7 +19,7 @@ if news_list:
             triples_list.extend(triples)
             triples_set.extend(triples)
         query = { "key": news["key"] }
-        update_values = { "$set": { "tripleSet": triples_set} }
+        update_values = { "$set": { "tripleSet": triples_set, "status": 2 } }
         db['news'].update_one(query, update_values)
 
     print("Writing {} triple set".format(len(triples_list)))
