@@ -84,15 +84,13 @@ def produceTriples(text):
                 triples.append(relationSent)
     return getPresentTense(triples)
 
+from tqdm import tqdm
+
 def write_to_file(triples, out_put_file):
     file_out = open(out_put_file, 'w')
-    check = []
-    for triple in triples:
+    for triple in tqdm(triples):
         line = "\t".join(triple)
-        if line not in check:
-            check.append(line)
-            print(line)
-            file_out.write(line + "\n")
+        file_out.write(line + "\n")
     file_out.close()
 
 # def addTriples(sentence):

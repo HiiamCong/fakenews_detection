@@ -170,7 +170,7 @@ class Tester(object):
         input_triple = {'batch_h': np.array([h]), 'batch_t': np.array([t]), 'batch_r': np.array([r]), 'mode': 'normal'}
         res = self.test_one_step(input_triple)
         print("Predicted Score: {}".format(res))
-        if abs(res[0]-threshlod) <= 0.001:
+        if abs(res[0]-threshlod) <= 0.001  or res[0] <= threshlod:
             return 0
         else:
             return 1

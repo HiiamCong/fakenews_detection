@@ -16,7 +16,7 @@ http://139.129.163.161//static/notes/installation.html
 # RUN STEP BY STEP:
 1. gen_train_data.py
 2. convert_to_training_form.py
-3. cd to OpenKE/benchmarks/FAKE_NEWS
+3. cd OpenKE/benchmarks/FAKE_NEWS
 4. n-n.py
 5. train_transe_fakenews.py
 6. predict_news.py

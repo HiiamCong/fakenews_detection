@@ -6,9 +6,14 @@ from OpenKE.openke.module.strategy import NegativeSampling
 from OpenKE.openke.data import TrainDataLoader, TestDataLoader
 from item2id import entity_map, relation_map
 
-# test_dataloader = TestDataLoader("./benchmarks/FAKE_NEWS/", "classification")
-# print(len(entity_map.keys()))
-# print(len(relation_map.keys()))
+from utils.mongo import Mongo
+db = Mongo().get_client()
+threshlod = float(db['training_results'].find_one({'name': 'transe'})['threshold'])
+print("Get transe threshold: {}".format(threshlod))
+
+print("Process input sentence")
+sentence = "coronavirus cut into revenues"
+
 transe = TransE(
 	ent_tot = len(entity_map.keys()),
 	rel_tot = len(relation_map.keys()),
@@ -21,9 +26,7 @@ transe.load_checkpoint('OpenKE/checkpoint/transe_fn.ckpt')
 # tester = Tester(model = transe, data_loader = test_dataloader, use_gpu = True)
 tester = Tester(model = transe, use_gpu = False)
 
-print("Process input sentence")
-sentence = "coronavirus cut into revenues"
-threshlod = 1.6558074951171875
+# threshlod = 1.6558074951171875
 
 triples = produceTriples(sentence)
 result = None

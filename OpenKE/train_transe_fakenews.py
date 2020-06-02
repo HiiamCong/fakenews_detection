@@ -4,6 +4,7 @@ from openke.module.model import TransE
 from openke.module.loss import SigmoidLoss
 from openke.module.strategy import NegativeSampling
 from openke.data import TrainDataLoader, TestDataLoader
+from utils.mongo import Mongo
 
 # dataloader for training
 train_dataloader = TrainDataLoader(
@@ -47,4 +48,20 @@ transe.save_checkpoint('./checkpoint/transe_fn.ckpt')
 # test the model
 transe.load_checkpoint('./checkpoint/transe_fn.ckpt')
 tester = Tester(model = transe, data_loader = test_dataloader, use_gpu = False)
-tester.run_link_prediction(type_constrain = False)
+# tester.run_link_prediction(type_constrain = False)
+acc, threshlod = tester.run_triple_classification()
+
+db = Mongo().get_client()
+db_col = db["training_results"]
+
+transe_result = db_col.find_one({"name": "transe"})
+
+if transe_result:
+	print("update acc and threshold to existed transe result")
+	query = { "name": "transe" }
+	update_values = { "$set": { "acc": acc, "threshold": threshlod } }
+	db_col.update_one(query, update_values)
+else:
+	print("add new transe result")
+	transe_dict = { "name": "transe", "acc": acc, "threshold": threshlod }
+	x = db_col.insert_one(transe_dict)
